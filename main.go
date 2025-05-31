@@ -123,6 +123,29 @@ func main() {
 		return err
 	})
 
+	e.GET("/null/game/*", func(c echo.Context) error {
+		// Extract the path from the original request
+		path := c.Param("*")
+
+		// Construct the remote URL
+		targetURL := "https://game.aq.com/game/" + path
+
+		// Make the request to the remote server
+		resp, err := http.Get(targetURL)
+		if err != nil {
+			return c.String(http.StatusBadGateway, "Error reaching target: "+err.Error())
+		}
+		defer resp.Body.Close()
+
+		// Set the same content-type
+		c.Response().Header().Set(echo.HeaderContentType, resp.Header.Get(echo.HeaderContentType))
+
+		// Copy the body to the response
+		c.Response().WriteHeader(resp.StatusCode)
+		_, err = io.Copy(c.Response(), resp.Body)
+		return err
+	})
+
 	e.GET("/game/*", func(c echo.Context) error {
 		// Extract the path from the original request
 		path := c.Param("*")
