@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Character Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ffcc00;
+      --bg-dark: #121212;
+      --bg-card: #1e1e1e;
+      --text-primary: #f1f1f1;
+      --text-secondary: #ccc;
+      --border-color: #333;
+      --shadow-color: rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .character-page {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: var(--bg-card);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px var(--shadow-color);
+    }
+
+    .character-header {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .character-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 15px;
+      object-fit: cover;
+      border: 3px solid var(--primary-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .character-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .character-name {
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 0;
+      color: var(--primary-color);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .character-class,
+    .character-level {
+      margin: 0.5rem 0;
+      color: var(--text-secondary);
+      font-size: 1.2em;
+    }
+
+    .background-selector {
+      margin-top: 1rem;
+    }
+
+    .background-selector select {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      border: 2px solid var(--primary-color);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .background-selector select:hover {
+      background-color: var(--bg-card);
+    }
+
+    .background-selector select:focus {
+      box-shadow: 0 0 0 2px var(--primary-color);
+    }
+
+    .create-hero-btn {
+      margin-top: 1rem;
+      background-color: var(--primary-color);
+      color: var(--bg-dark);
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 550px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .create-hero-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+    }
+
+    .create-hero-btn:active {
+      transform: translateY(0);
+    }
+
+    .action-section {
+      text-align: center;
+      margin: 2rem 0;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+    }
+
+    .character-stats,
+    .character-bio,
+    .character-abilities {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .character-stats:hover,
+    .character-bio:hover,
+    .character-abilities:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-size: 1.8em;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    ul li:last-child {
+      border-bottom: none;
+    }
+
+    .character-bio p {
+      line-height: 1.8;
+      font-size: 1.1em;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5em;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .ability-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .ability-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg-dark);
+      font-weight: bold;
+    }
+
+    #flashContent {
+      width: 100%;
+      max-width: 550px;
+      margin: 0 auto;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+</head>
+
+<body>
+  <div class="character-page">
+    <div class="character-header">
+      <div id="flashContent"></div>
+      <div class="character-info">
+        <h1 class="character-name">Defo not Artix</h1>
+        <div class="character-class">Natlan Revenger</div>
+        <div class="character-level">Level 99</div>
+        <div class="background-selector">
+          <select id="bgSelector" onchange="updateBackground(this.value)">
+            <option value="0">Battleon</option>
+            <option value="1">Doomwood</option>
+            <option value="2">Ledgermayne</option>
+            <option value="3">Lightguard</option>
+            <option value="4">Northern Lights</option>
+            <option value="5">Sandsea</option>
+            <option value="6">Shadowfall</option>
+            <option value="7">Skyguard</option>
+            <option value="8">Void</option>
+            <option value="9">Yulgar</option>
+            <option value="10">Mogloween</option>
+            <option value="11">Frostvale</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-section">
+      <button class="create-hero-btn" onclick="createHero()">Create Hero</button>
+    </div>
+
+    <div class="character-stats">
+      <h2>Stats</h2>
+      <div class="stat-grid">
+        <div class="stat-item">
+          <div class="stat-value">1200</div>
+          <div class="stat-label">Health</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">200</div>
+          <div class="stat-label">Attack</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">80</div>
+          <div class="stat-label">Defense</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">300</div>
+          <div class="stat-label">Speed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="character-bio">
+      <h2>Biography</h2>
+      <p>
+        Arin grew up in the shadowy alleys of Thornport. Known for her agility and precision,
+        she joined the Shadow Guild and rose through the ranks as a feared assassin. With unmatched
+        speed, she eliminates threats before they draw a weapon.
+      </p>
+    </div>
+
+    <div class="character-abilities">
+      <h2>Abilities</h2>
+      <ul>
+        <li class="ability-item">
+          <div class="ability-icon">1</div>
+          <div>
+            <strong>Shadow Step</strong>
+            <p>Instantly teleport behind the enemy.</p>
+          </div>
+        </li>
+        <li class="ability-item">
+          <div class="ability-icon">2</div>
+          <div>
+            <strong>Venom Strike</strong>
+            <p>Deals poison damage over time.</p>
+          </div>
+        </li>
+        <li class="ability-item">
+          <div class="ability-icon">3</div>
+          <div>
+            <strong>Blade Dance</strong>
+            <p>A flurry of strikes hitting multiple enemies.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="./script/swfobject.js"></script>
+  <script>
+    // Character data configuration
+    const characterData = {
+      username: "Defo not Artix",
+      level: 99,
+      class: "Natlan Revenger",
+      accountType: "Upholder",
+      gold: "1,000,000",
+      hairColor: "0x000000",
+      skinColor: "0xFFCC99",
+      eyeColor: "0x0000FF",
+      trimColor: "0xFF0000",
+      baseColor: "0x0000FF",
+      accessoryColor: "0xFFFF00",
+      gender: "M",
+      hairFile: "hair1",
+      hairName: "Spiky Hair",
+      classFile: "peasant2_skin.swf",
+      classLink: "Peasant2",
+      className: "Not a Staff Class",
+      weaponFile: "items/swords/sword01.swf",
+      weaponLink: "Sword01",
+      weaponName: "Default Sword",
+      capeFile: "items/capes/wings4.swf",
+      capeLink: "Wings4",
+      capeName: "Wings of the Vindicator",
+      helmFile: "items/helms/J6.swf",
+      helmLink: "J6helm",
+      helmName: "J6 Helm",
+      petFile: "items/pets/wyvernpet.swf",
+      petLink: "Wyvernpet",
+      petName: "Miniature Wyvern",
+      bgIndex: 5,
+      heroTitle: "Good"
+    };
+
+    // Function to load SWF
+    function loadSWF() {
+      const flashContent = document.getElementById('flashContent');
+      flashContent.innerHTML = '';
+      
+      const ruffle = window.RufflePlayer.newest();
+      const player = ruffle.createPlayer();
+      player.style.width = "550px";
+      player.style.height = "350px";
+      flashContent.appendChild(player);
+      
+      player.load({
+        url: "./character5.swf",
+        parameters: generateFlashVars(characterData),
+        backgroundColor: "#000000",
+        letterbox: "on",
+        wmode: "transparent",
+        showSwfDownload: false,
+        contextMenu: false,
+        upgradeToHttps: true,
+        maxExecutionDuration: { secs: 15 },
+        logLevel: "error",
+        sanitize: true,
+        allowScriptAccess: false,
+        allowNetworking: "none",
+        allowFullScreen: false,
+        showMenu: false,
+        warnOnUnsupportedContent: true,
+        preferredRenderer: "webgl"
+      });
+    }
+
+    // Function to update background
+    function updateBackground(index) {
+      characterData.bgIndex = parseInt(index);
+      loadSWF();
+    }
+
+    // Function to create hero
+    async function createHero() {
+      try {
+        const response = await fetch(`/generate?bgIndex=${characterData.bgIndex}`);
+        if (!response.ok) {
+          throw new Error('Failed to generate hero data');
+        }
+        const newData = await response.json();
+        // Update character data with new values
+        Object.assign(characterData, newData);
+        // Reload the page to show new data
+        window.location.reload();
+      } catch (error) {
+        console.error('Error generating hero:', error);
+        alert('Failed to generate hero. Please try again.');
+      }
+    }
+
+    // Ruffle configuration
+    const ruffleConfig = {
+      publicPath: "https://unpkg.com/@ruffle-rs/ruffle/",
+      polyfills: true,
+      autoplay: "on",
+      unmuteOverlay: "hidden",
+      backgroundColor: "#000000",
+      letterbox: "on",
+      wmode: "transparent",
+      showSwfDownload: false,
+      contextMenu: false,
+      upgradeToHttps: true,
+      maxExecutionDuration: { secs: 15 },
+      logLevel: "error",
+      sanitize: true,
+      allowScriptAccess: false,
+      allowNetworking: "none",
+      allowFullScreen: false,
+      showMenu: false,
+      warnOnUnsupportedContent: true,
+      preferredRenderer: "webgl"
+    };
+
+    // Initialize Ruffle
+    function initRuffle() {
+      window.RufflePlayer = window.RufflePlayer || {};
+      window.RufflePlayer.config = ruffleConfig;
+    }
+
+    // Generate Flash variables
+    function generateFlashVars(data) {
+      return `intColorHair=${data.hairColor}&intColorSkin=${data.skinColor}&intColorEye=${data.eyeColor}&intColorTrim=${data.trimColor}&intColorBase=${data.baseColor}&intColorAccessory=${data.accessoryColor}&ia1=13600&strGender=${data.gender}&strHairFile=${data.hairFile}&strHairName=${data.hairName}&strName=${data.username}&intLevel=${data.level}&strClassName=${data.class}&strClassFile=${data.classFile}&strClassLink=${data.classLink}&strArmorName=${data.className}&strWeaponFile=${data.weaponFile}&strWeaponLink=${data.weaponLink}&strWeaponType=Dagger&strWeaponName=${data.weaponName}&strCapeFile=${data.capeFile}&strCapeLink=${data.capeLink}&strCapeName=${data.capeName}&strHelmFile=${data.helmFile}&strHelmLink=${data.helmLink}&strHelmName=${data.helmName}&strPetFile=${data.petFile}&strPetLink=${data.petLink}&strPetName=${data.petName}&bgindex=${data.bgIndex}&strFaction=${data.heroTitle}`;
+    }
+
+    var swfVersionStr = "9.0.0";
+    var xiSwfUrlStr = "";
+    var flashvars = [generateFlashVars(characterData)];
+    var params = {};
+    params.quality = "high";
+    params.bgcolor = "#fef0c1";
+    params.play = "true";
+    params.loop = "true";
+    params.wmode = "opaque";
+    params.scale = "showall";
+    params.menu = "true";
+    params.devicefont = "false";
+    params.salign = "";
+    params.allowscriptaccess = "always";
+    var attributes = {};
+    attributes.id = "character5";
+    attributes.name = "character5";
+    attributes.class = "center-block"
+
+    swfobject.embedSWF(
+      "./character5.swf", "flashContent",
+      "550", "350",
+      swfVersionStr, xiSwfUrlStr,
+      flashvars, params, attributes);
+
+    // Initialize everything when the page loads
+    window.onload = async function () {
+      try {
+        // Get initial data
+        const response = await fetch('/generate');
+        if (!response.ok) {
+          throw new Error('Failed to get initial hero data');
+        }
+        const initialData = await response.json();
+        Object.assign(characterData, initialData);
+        
+        initRuffle();
+        loadSWF();
+      } catch (error) {
+        console.error('Error loading initial data:', error);
+      }
+    };
+  </script>
+</body>
+
+</html>
