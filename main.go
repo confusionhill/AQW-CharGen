@@ -161,9 +161,9 @@ func main() {
 	}()
 
 	// Open browser
-	if err := openBrowser("http://localhost:80"); err != nil {
-		e.Logger.Printf("Failed to open browser: %v", err)
-	}
+	// if err := openBrowser("http://localhost:80"); err != nil {
+	// 	e.Logger.Printf("Failed to open browser: %v", err)
+	// }
 
 	// Wait for interrupt signal to gracefully shutdown the server
 	quit := make(chan os.Signal, 1)
