@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -11,70 +13,13 @@ import (
 func main() {
 	// Create a new Echo instance
 	e := echo.New()
-	// Proxy handler
-	e.GET("/bgs/*", func(c echo.Context) error {
-		// Extract the path from the original request
-		path := c.Param("*")
 
-		// Construct the remote URL
-		targetURL := "https://game.aq.com/flash/chardetail/bgs/" + path
+	// Root endpoint that serves HTML with generated data
+	e.GET("/", func(c echo.Context) error {
+		// Get all query parameters
+		params := c.QueryParams()
 
-		// Make the request to the remote server
-		resp, err := http.Get(targetURL)
-		if err != nil {
-			return c.String(http.StatusBadGateway, "Error reaching target: "+err.Error())
-		}
-		defer resp.Body.Close()
-
-		// Set the same content-type
-		c.Response().Header().Set(echo.HeaderContentType, resp.Header.Get(echo.HeaderContentType))
-
-		// Copy the body to the response
-		c.Response().WriteHeader(resp.StatusCode)
-		_, err = io.Copy(c.Response(), resp.Body)
-		fmt.Println(path)
-		return err
-	})
-	e.GET("/game/*", func(c echo.Context) error {
-
-		// Extract the path from the original request
-		path := c.Param("*")
-
-		// Construct the remote URL
-		targetURL := "https://game.aq.com/game/" + path
-
-		// Make the request to the remote server
-		resp, err := http.Get(targetURL)
-		if err != nil {
-			return c.String(http.StatusBadGateway, "Error reaching target: "+err.Error())
-		}
-		defer resp.Body.Close()
-
-		// Set the same content-type
-		c.Response().Header().Set(echo.HeaderContentType, resp.Header.Get(echo.HeaderContentType))
-
-		// Copy the body to the response
-		c.Response().WriteHeader(resp.StatusCode)
-		_, err = io.Copy(c.Response(), resp.Body)
-		return err
-	})
-
-	// Serve static files from the public directory
-	e.Static("/", "public")
-
-	e.POST("/make", func(c echo.Context) error {
-		return c.String(200, "makan siang")
-	})
-
-	// Add endpoint to generate character data
-	e.GET("/generate", func(c echo.Context) error {
-		// Get background index from query param
-		bgIndex := c.QueryParam("bgIndex")
-		if bgIndex == "" {
-			bgIndex = "0" // default to Battleon
-		}
-
-		// Generate character data
+		// Generate character data with default values
 		characterData := map[string]interface{}{
 			"username":       "Defo not Artix",
 			"level":          99,
@@ -105,11 +50,86 @@ func main() {
 			"petFile":        "items/pets/wyvernpet.swf",
 			"petLink":        "Wyvernpet",
 			"petName":        "Miniature Wyvern",
-			"bgIndex":        bgIndex,
+			"bgIndex":        "0",
 			"heroTitle":      "Good",
 		}
 
-		return c.JSON(200, characterData)
+		// Update character data with query parameters
+		for key, values := range params {
+			if len(values) > 0 {
+				// Convert numeric values
+				if key == "level" {
+					if val, err := strconv.Atoi(values[0]); err == nil {
+						characterData[key] = val
+					}
+				} else {
+					characterData[key] = values[0]
+				}
+			}
+		}
+
+		// Parse and execute the template
+		tmpl, err := template.ParseFiles("public/index.html")
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Error parsing template: "+err.Error())
+		}
+
+		return tmpl.Execute(c.Response().Writer, characterData)
+	})
+
+	// Proxy handler
+	e.GET("/bgs/*", func(c echo.Context) error {
+		// Extract the path from the original request
+		path := c.Param("*")
+
+		// Construct the remote URL
+		targetURL := "https://game.aq.com/flash/chardetail/bgs/" + path
+
+		// Make the request to the remote server
+		resp, err := http.Get(targetURL)
+		if err != nil {
+			return c.String(http.StatusBadGateway, "Error reaching target: "+err.Error())
+		}
+		defer resp.Body.Close()
+
+		// Set the same content-type
+		c.Response().Header().Set(echo.HeaderContentType, resp.Header.Get(echo.HeaderContentType))
+
+		// Copy the body to the response
+		c.Response().WriteHeader(resp.StatusCode)
+		_, err = io.Copy(c.Response(), resp.Body)
+		fmt.Println(path)
+		return err
+	})
+
+	e.GET("/game/*", func(c echo.Context) error {
+		// Extract the path from the original request
+		path := c.Param("*")
+
+		// Construct the remote URL
+		targetURL := "https://game.aq.com/game/" + path
+
+		// Make the request to the remote server
+		resp, err := http.Get(targetURL)
+		if err != nil {
+			return c.String(http.StatusBadGateway, "Error reaching target: "+err.Error())
+		}
+		defer resp.Body.Close()
+
+		// Set the same content-type
+		c.Response().Header().Set(echo.HeaderContentType, resp.Header.Get(echo.HeaderContentType))
+
+		// Copy the body to the response
+		c.Response().WriteHeader(resp.StatusCode)
+		_, err = io.Copy(c.Response(), resp.Body)
+		return err
+	})
+
+	// Serve static files from the public directory
+	e.Static("/", "public")
+
+	e.POST("/make", func(c echo.Context) error {
+		return c.String(200, "makan siang")
 	})
 
 	// Start server

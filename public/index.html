@@ -226,6 +226,48 @@
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
+
+    .character-form {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      color: var(--text-secondary);
+      font-size: 0.9em;
+    }
+
+    .form-group input,
+    .form-group select {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
   </style>
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 </head>
@@ -240,25 +282,152 @@
         <div class="character-level">Level 99</div>
         <div class="background-selector">
           <select id="bgSelector" onchange="updateBackground(this.value)">
-            <option value="0">Battleon</option>
-            <option value="1">Doomwood</option>
-            <option value="2">Ledgermayne</option>
-            <option value="3">Lightguard</option>
-            <option value="4">Northern Lights</option>
-            <option value="5">Sandsea</option>
-            <option value="6">Shadowfall</option>
-            <option value="7">Skyguard</option>
-            <option value="8">Void</option>
-            <option value="9">Yulgar</option>
-            <option value="10">Mogloween</option>
-            <option value="11">Frostvale</option>
+            <option value="0" {{if eq .bgIndex "0"}}selected{{end}}>Battleon</option>
+            <option value="1" {{if eq .bgIndex "1"}}selected{{end}}>Doomwood</option>
+            <option value="2" {{if eq .bgIndex "2"}}selected{{end}}>Ledgermayne</option>
+            <option value="3" {{if eq .bgIndex "3"}}selected{{end}}>Lightguard</option>
+            <option value="4" {{if eq .bgIndex "4"}}selected{{end}}>Northern Lights</option>
+            <option value="5" {{if eq .bgIndex "5"}}selected{{end}}>Sandsea</option>
+            <option value="6" {{if eq .bgIndex "6"}}selected{{end}}>Shadowfall</option>
+            <option value="7" {{if eq .bgIndex "7"}}selected{{end}}>Skyguard</option>
+            <option value="8" {{if eq .bgIndex "8"}}selected{{end}}>Void</option>
+            <option value="9" {{if eq .bgIndex "9"}}selected{{end}}>Yulgar</option>
+            <option value="10" {{if eq .bgIndex "10"}}selected{{end}}>Mogloween</option>
+            <option value="11" {{if eq .bgIndex "11"}}selected{{end}}>Frostvale</option>
           </select>
         </div>
       </div>
     </div>
 
     <div class="action-section">
-      <button class="create-hero-btn" onclick="createHero()">Create Hero</button>
+      <form id="characterForm" onsubmit="return false;">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{.username}}">
+          </div>
+          <div class="form-group">
+            <label for="level">Level</label>
+            <input type="number" id="level" name="level" value="{{.level}}">
+          </div>
+          <div class="form-group">
+            <label for="class">Class</label>
+            <input type="text" id="class" name="class" value="{{.class}}">
+          </div>
+          <div class="form-group">
+            <label for="accountType">Account Type</label>
+            <input type="text" id="accountType" name="accountType" value="{{.accountType}}">
+          </div>
+          <div class="form-group">
+            <label for="gold">Gold</label>
+            <input type="text" id="gold" name="gold" value="{{.gold}}">
+          </div>
+          <div class="form-group">
+            <label for="hairColor">Hair Color</label>
+            <input type="text" id="hairColor" name="hairColor" value="{{.hairColor}}">
+          </div>
+          <div class="form-group">
+            <label for="skinColor">Skin Color</label>
+            <input type="text" id="skinColor" name="skinColor" value="{{.skinColor}}">
+          </div>
+          <div class="form-group">
+            <label for="eyeColor">Eye Color</label>
+            <input type="text" id="eyeColor" name="eyeColor" value="{{.eyeColor}}">
+          </div>
+          <div class="form-group">
+            <label for="trimColor">Trim Color</label>
+            <input type="text" id="trimColor" name="trimColor" value="{{.trimColor}}">
+          </div>
+          <div class="form-group">
+            <label for="baseColor">Base Color</label>
+            <input type="text" id="baseColor" name="baseColor" value="{{.baseColor}}">
+          </div>
+          <div class="form-group">
+            <label for="accessoryColor">Accessory Color</label>
+            <input type="text" id="accessoryColor" name="accessoryColor" value="{{.accessoryColor}}">
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+              <option value="M" {{if eq .gender "M"}}selected{{end}}>Male</option>
+              <option value="F" {{if eq .gender "F"}}selected{{end}}>Female</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="hairFile">Hair File</label>
+            <input type="text" id="hairFile" name="hairFile" value="{{.hairFile}}">
+          </div>
+          <div class="form-group">
+            <label for="hairName">Hair Name</label>
+            <input type="text" id="hairName" name="hairName" value="{{.hairName}}">
+          </div>
+          <div class="form-group">
+            <label for="classFile">Class File</label>
+            <input type="text" id="classFile" name="classFile" value="{{.classFile}}">
+          </div>
+          <div class="form-group">
+            <label for="classLink">Class Link</label>
+            <input type="text" id="classLink" name="classLink" value="{{.classLink}}">
+          </div>
+          <div class="form-group">
+            <label for="className">Class Name</label>
+            <input type="text" id="className" name="className" value="{{.className}}">
+          </div>
+          <div class="form-group">
+            <label for="weaponFile">Weapon File</label>
+            <input type="text" id="weaponFile" name="weaponFile" value="{{.weaponFile}}">
+          </div>
+          <div class="form-group">
+            <label for="weaponLink">Weapon Link</label>
+            <input type="text" id="weaponLink" name="weaponLink" value="{{.weaponLink}}">
+          </div>
+          <div class="form-group">
+            <label for="weaponName">Weapon Name</label>
+            <input type="text" id="weaponName" name="weaponName" value="{{.weaponName}}">
+          </div>
+          <div class="form-group">
+            <label for="capeFile">Cape File</label>
+            <input type="text" id="capeFile" name="capeFile" value="{{.capeFile}}">
+          </div>
+          <div class="form-group">
+            <label for="capeLink">Cape Link</label>
+            <input type="text" id="capeLink" name="capeLink" value="{{.capeLink}}">
+          </div>
+          <div class="form-group">
+            <label for="capeName">Cape Name</label>
+            <input type="text" id="capeName" name="capeName" value="{{.capeName}}">
+          </div>
+          <div class="form-group">
+            <label for="helmFile">Helm File</label>
+            <input type="text" id="helmFile" name="helmFile" value="{{.helmFile}}">
+          </div>
+          <div class="form-group">
+            <label for="helmLink">Helm Link</label>
+            <input type="text" id="helmLink" name="helmLink" value="{{.helmLink}}">
+          </div>
+          <div class="form-group">
+            <label for="helmName">Helm Name</label>
+            <input type="text" id="helmName" name="helmName" value="{{.helmName}}">
+          </div>
+          <div class="form-group">
+            <label for="petFile">Pet File</label>
+            <input type="text" id="petFile" name="petFile" value="{{.petFile}}">
+          </div>
+          <div class="form-group">
+            <label for="petLink">Pet Link</label>
+            <input type="text" id="petLink" name="petLink" value="{{.petLink}}">
+          </div>
+          <div class="form-group">
+            <label for="petName">Pet Name</label>
+            <input type="text" id="petName" name="petName" value="{{.petName}}">
+          </div>
+          <div class="form-group">
+            <label for="heroTitle">Hero Title</label>
+            <input type="text" id="heroTitle" name="heroTitle" value="{{.heroTitle}}">
+          </div>
+        </div>
+        <button type="submit" class="create-hero-btn" onclick="createHero()">Create Hero</button>
+      </form>
     </div>
 
     <div class="character-stats">
@@ -324,37 +493,37 @@
   <script>
     // Character data configuration
     const characterData = {
-      username: "Defo not Artix",
-      level: 99,
-      class: "Natlan Revenger",
-      accountType: "Upholder",
-      gold: "1,000,000",
-      hairColor: "0x000000",
-      skinColor: "0xFFCC99",
-      eyeColor: "0x0000FF",
-      trimColor: "0xFF0000",
-      baseColor: "0x0000FF",
-      accessoryColor: "0xFFFF00",
-      gender: "M",
-      hairFile: "hair1",
-      hairName: "Spiky Hair",
-      classFile: "peasant2_skin.swf",
-      classLink: "Peasant2",
-      className: "Not a Staff Class",
-      weaponFile: "items/swords/sword01.swf",
-      weaponLink: "Sword01",
-      weaponName: "Default Sword",
-      capeFile: "items/capes/wings4.swf",
-      capeLink: "Wings4",
-      capeName: "Wings of the Vindicator",
-      helmFile: "items/helms/J6.swf",
-      helmLink: "J6helm",
-      helmName: "J6 Helm",
-      petFile: "items/pets/wyvernpet.swf",
-      petLink: "Wyvernpet",
-      petName: "Miniature Wyvern",
-      bgIndex: 5,
-      heroTitle: "Good"
+      username: "{{.username}}",
+      level: {{.level}},
+      class: "{{.class}}",
+      accountType: "{{.accountType}}",
+      gold: "{{.gold}}",
+      hairColor: "{{.hairColor}}",
+      skinColor: "{{.skinColor}}",
+      eyeColor: "{{.eyeColor}}",
+      trimColor: "{{.trimColor}}",
+      baseColor: "{{.baseColor}}",
+      accessoryColor: "{{.accessoryColor}}",
+      gender: "{{.gender}}",
+      hairFile: "{{.hairFile}}",
+      hairName: "{{.hairName}}",
+      classFile: "{{.classFile}}",
+      classLink: "{{.classLink}}",
+      className: "{{.className}}",
+      weaponFile: "{{.weaponFile}}",
+      weaponLink: "{{.weaponLink}}",
+      weaponName: "{{.weaponName}}",
+      capeFile: "{{.capeFile}}",
+      capeLink: "{{.capeLink}}",
+      capeName: "{{.capeName}}",
+      helmFile: "{{.helmFile}}",
+      helmLink: "{{.helmLink}}",
+      helmName: "{{.helmName}}",
+      petFile: "{{.petFile}}",
+      petLink: "{{.petLink}}",
+      petName: "{{.petName}}",
+      bgIndex: {{.bgIndex}},
+      heroTitle: "{{.heroTitle}}"
     };
 
     // Function to load SWF
@@ -391,26 +560,37 @@
 
     // Function to update background
     function updateBackground(index) {
-      characterData.bgIndex = parseInt(index);
-      loadSWF();
+      const form = document.getElementById('characterForm');
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+      
+      // Add all current form values
+      for (const [key, value] of formData.entries()) {
+        params.append(key, value);
+      }
+      
+      // Override bgIndex with the new value
+      params.set('bgIndex', index);
+      
+      window.location.href = `/?${params.toString()}`;
     }
 
     // Function to create hero
-    async function createHero() {
-      try {
-        const response = await fetch(`/generate?bgIndex=${characterData.bgIndex}`);
-        if (!response.ok) {
-          throw new Error('Failed to generate hero data');
-        }
-        const newData = await response.json();
-        // Update character data with new values
-        Object.assign(characterData, newData);
-        // Reload the page to show new data
-        window.location.reload();
-      } catch (error) {
-        console.error('Error generating hero:', error);
-        alert('Failed to generate hero. Please try again.');
+    function createHero() {
+      const form = document.getElementById('characterForm');
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+      
+      // Add all current form values
+      for (const [key, value] of formData.entries()) {
+        params.append(key, value);
       }
+      
+      // Preserve the current background index
+      const currentBgIndex = document.getElementById('bgSelector').value;
+      params.set('bgIndex', currentBgIndex);
+      
+      window.location.href = `/?${params.toString()}`;
     }
 
     // Ruffle configuration
@@ -473,21 +653,9 @@
       flashvars, params, attributes);
 
     // Initialize everything when the page loads
-    window.onload = async function () {
-      try {
-        // Get initial data
-        const response = await fetch('/generate');
-        if (!response.ok) {
-          throw new Error('Failed to get initial hero data');
-        }
-        const initialData = await response.json();
-        Object.assign(characterData, initialData);
-        
-        initRuffle();
-        loadSWF();
-      } catch (error) {
-        console.error('Error loading initial data:', error);
-      }
+    window.onload = function () {
+      initRuffle();
+      loadSWF();
     };
   </script>
 </body>
