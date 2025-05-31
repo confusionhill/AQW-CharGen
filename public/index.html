@@ -268,6 +268,26 @@
       outline: none;
       border-color: var(--primary-color);
     }
+
+    .form-group input[type="color"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 40px;
+      padding: 2px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--bg-dark);
+      cursor: pointer;
+    }
+
+    .form-group input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .form-group input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 2px;
+    }
   </style>
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 </head>
@@ -324,27 +344,27 @@
           </div>
           <div class="form-group">
             <label for="hairColor">Hair Color</label>
-            <input type="text" id="hairColor" name="hairColor" value="{{.hairColor}}">
+            <input type="color" id="hairColor" name="hairColor" value="{{.hairColor}}">
           </div>
           <div class="form-group">
             <label for="skinColor">Skin Color</label>
-            <input type="text" id="skinColor" name="skinColor" value="{{.skinColor}}">
+            <input type="color" id="skinColor" name="skinColor" value="{{.skinColor}}">
           </div>
           <div class="form-group">
             <label for="eyeColor">Eye Color</label>
-            <input type="text" id="eyeColor" name="eyeColor" value="{{.eyeColor}}">
+            <input type="color" id="eyeColor" name="eyeColor" value="{{.eyeColor}}">
           </div>
           <div class="form-group">
             <label for="trimColor">Trim Color</label>
-            <input type="text" id="trimColor" name="trimColor" value="{{.trimColor}}">
+            <input type="color" id="trimColor" name="trimColor" value="{{.trimColor}}">
           </div>
           <div class="form-group">
             <label for="baseColor">Base Color</label>
-            <input type="text" id="baseColor" name="baseColor" value="{{.baseColor}}">
+            <input type="color" id="baseColor" name="baseColor" value="{{.baseColor}}">
           </div>
           <div class="form-group">
             <label for="accessoryColor">Accessory Color</label>
-            <input type="text" id="accessoryColor" name="accessoryColor" value="{{.accessoryColor}}">
+            <input type="color" id="accessoryColor" name="accessoryColor" value="{{.accessoryColor}}">
           </div>
           <div class="form-group">
             <label for="gender">Gender</label>
@@ -384,6 +404,24 @@
           <div class="form-group">
             <label for="weaponName">Weapon Name</label>
             <input type="text" id="weaponName" name="weaponName" value="{{.weaponName}}">
+          </div>
+          <div class="form-group">
+            <label for="weaponType">Weapon Type</label>
+            <select id="weaponType" name="weaponType">
+              <option value="Axe" {{if eq .weaponType "Axe"}}selected{{end}}>Axe</option>
+              <option value="Bow" {{if eq .weaponType "Bow"}}selected{{end}}>Bow</option>
+              <option value="Dagger" {{if eq .weaponType "Dagger"}}selected{{end}}>Dagger</option>
+              <option value="Gauntlet" {{if eq .weaponType "Gauntlet"}}selected{{end}}>Gauntlet</option>
+              <option value="Gun" {{if eq .weaponType "Gun"}}selected{{end}}>Gun</option>
+              <option value="HandGun" {{if eq .weaponType "HandGun"}}selected{{end}}>Hand Gun</option>
+              <option value="Mace" {{if eq .weaponType "Mace"}}selected{{end}}>Mace</option>
+              <option value="Polearm" {{if eq .weaponType "Polearm"}}selected{{end}}>Polearm</option>
+              <option value="Rifle" {{if eq .weaponType "Rifle"}}selected{{end}}>Rifle</option>
+              <option value="Staff" {{if eq .weaponType "Staff"}}selected{{end}}>Staff</option>
+              <option value="Sword" {{if eq .weaponType "Sword"}}selected{{end}}>Sword</option>
+              <option value="Wand" {{if eq .weaponType "Wand"}}selected{{end}}>Wand</option>
+              <option value="Whip" {{if eq .weaponType "Whip"}}selected{{end}}>Whip</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="capeFile">Cape File</label>
@@ -491,19 +529,38 @@
 
   <script src="./script/swfobject.js"></script>
   <script>
+    // Function to convert hex string to proper color format
+    function convertHexToColor(hex) {
+      // Remove # prefix if present
+      hex = hex.replace('#', '');
+      // Add 0x prefix if not present
+      if (!hex.startsWith('0x')) {
+        hex = '0x' + hex;
+      }
+      return hex;
+    }
+
+    // Function to convert 0xRRGGBB to #RRGGBB for color picker
+    function convertToColorPicker(hex) {
+      // Remove 0x prefix if present
+      hex = hex.replace('0x', '');
+      // Add # prefix
+      return '#' + hex;
+    }
+
     // Character data configuration
     const characterData = {
       username: "{{.username}}",
-      level: {{.level}},
+      level: "{{.level}}",
       class: "{{.class}}",
       accountType: "{{.accountType}}",
       gold: "{{.gold}}",
-      hairColor: "{{.hairColor}}",
-      skinColor: "{{.skinColor}}",
-      eyeColor: "{{.eyeColor}}",
-      trimColor: "{{.trimColor}}",
-      baseColor: "{{.baseColor}}",
-      accessoryColor: "{{.accessoryColor}}",
+      hairColor: convertHexToColor("{{.hairColor}}"),
+      skinColor: convertHexToColor("{{.skinColor}}"),
+      eyeColor: convertHexToColor("{{.eyeColor}}"),
+      trimColor: convertHexToColor("{{.trimColor}}"),
+      baseColor: convertHexToColor("{{.baseColor}}"),
+      accessoryColor: convertHexToColor("{{.accessoryColor}}"),
       gender: "{{.gender}}",
       hairFile: "{{.hairFile}}",
       hairName: "{{.hairName}}",
@@ -513,6 +570,7 @@
       weaponFile: "{{.weaponFile}}",
       weaponLink: "{{.weaponLink}}",
       weaponName: "{{.weaponName}}",
+      weaponType: "{{.weaponType}}",
       capeFile: "{{.capeFile}}",
       capeLink: "{{.capeLink}}",
       capeName: "{{.capeName}}",
@@ -522,7 +580,7 @@
       petFile: "{{.petFile}}",
       petLink: "{{.petLink}}",
       petName: "{{.petName}}",
-      bgIndex: {{.bgIndex}},
+      bgIndex: "{{.bgIndex}}",
       heroTitle: "{{.heroTitle}}"
     };
 
@@ -624,7 +682,7 @@
 
     // Generate Flash variables
     function generateFlashVars(data) {
-      return `intColorHair=${data.hairColor}&intColorSkin=${data.skinColor}&intColorEye=${data.eyeColor}&intColorTrim=${data.trimColor}&intColorBase=${data.baseColor}&intColorAccessory=${data.accessoryColor}&ia1=13600&strGender=${data.gender}&strHairFile=${data.hairFile}&strHairName=${data.hairName}&strName=${data.username}&intLevel=${data.level}&strClassName=${data.class}&strClassFile=${data.classFile}&strClassLink=${data.classLink}&strArmorName=${data.className}&strWeaponFile=${data.weaponFile}&strWeaponLink=${data.weaponLink}&strWeaponType=Dagger&strWeaponName=${data.weaponName}&strCapeFile=${data.capeFile}&strCapeLink=${data.capeLink}&strCapeName=${data.capeName}&strHelmFile=${data.helmFile}&strHelmLink=${data.helmLink}&strHelmName=${data.helmName}&strPetFile=${data.petFile}&strPetLink=${data.petLink}&strPetName=${data.petName}&bgindex=${data.bgIndex}&strFaction=${data.heroTitle}`;
+      return `intColorHair=${data.hairColor}&intColorSkin=${data.skinColor}&intColorEye=${data.eyeColor}&intColorTrim=${data.trimColor}&intColorBase=${data.baseColor}&intColorAccessory=${data.accessoryColor}&ia1=13600&strGender=${data.gender}&strHairFile=${data.hairFile}&strHairName=${data.hairName}&strName=${data.username}&intLevel=${data.level}&strClassName=${data.class}&strClassFile=${data.classFile}&strClassLink=${data.classLink}&strArmorName=${data.className}&strWeaponFile=${data.weaponFile}&strWeaponLink=${data.weaponLink}&strWeaponType=${data.weaponType}&strWeaponName=${data.weaponName}&strCapeFile=${data.capeFile}&strCapeLink=${data.capeLink}&strCapeName=${data.capeName}&strHelmFile=${data.helmFile}&strHelmLink=${data.helmLink}&strHelmName=${data.helmName}&strPetFile=${data.petFile}&strPetLink=${data.petLink}&strPetName=${data.petName}&bgindex=${data.bgIndex}&strFaction=${data.heroTitle}`;
     }
 
     var swfVersionStr = "9.0.0";
@@ -652,8 +710,16 @@
       swfVersionStr, xiSwfUrlStr,
       flashvars, params, attributes);
 
-    // Initialize everything when the page loads
+    // Initialize color pickers with default values
     window.onload = function () {
+      // Set initial color values
+      document.getElementById('hairColor').value = convertToColorPicker(characterData.hairColor);
+      document.getElementById('skinColor').value = convertToColorPicker(characterData.skinColor);
+      document.getElementById('eyeColor').value = convertToColorPicker(characterData.eyeColor);
+      document.getElementById('trimColor').value = convertToColorPicker(characterData.trimColor);
+      document.getElementById('baseColor').value = convertToColorPicker(characterData.baseColor);
+      document.getElementById('accessoryColor').value = convertToColorPicker(characterData.accessoryColor);
+
       initRuffle();
       loadSWF();
     };

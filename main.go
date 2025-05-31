@@ -5,10 +5,30 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"os"
+	"os/exec"
+	"os/signal"
+	"runtime"
 	"strconv"
+	"syscall"
 
 	"github.com/labstack/echo/v4"
 )
+
+func openBrowser(url string) error {
+	var err error
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("cmd", "/c", "start", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	return err
+}
 
 func main() {
 	// Create a new Echo instance
@@ -41,6 +61,7 @@ func main() {
 			"weaponFile":     "items/swords/sword01.swf",
 			"weaponLink":     "Sword01",
 			"weaponName":     "Default Sword",
+			"weaponType":     "Sword",
 			"capeFile":       "items/capes/wings4.swf",
 			"capeLink":       "Wings4",
 			"capeName":       "Wings of the Vindicator",
@@ -132,6 +153,25 @@ func main() {
 		return c.String(200, "makan siang")
 	})
 
-	// Start server
-	e.Logger.Fatal(e.Start(":80"))
+	// Start server in a goroutine
+	go func() {
+		if err := e.Start(":80"); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal("shutting down the server")
+		}
+	}()
+
+	// Open browser
+	if err := openBrowser("http://localhost:80"); err != nil {
+		e.Logger.Printf("Failed to open browser: %v", err)
+	}
+
+	// Wait for interrupt signal to gracefully shutdown the server
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	// Gracefully shutdown the server
+	if err := e.Shutdown(nil); err != nil {
+		e.Logger.Fatal(err)
+	}
 }
