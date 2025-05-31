@@ -155,15 +155,15 @@ func main() {
 
 	// Start server in a goroutine
 	go func() {
-		if err := e.Start(":80"); err != nil && err != http.ErrServerClosed {
+		if err := e.Start(":8080"); err != nil && err != http.ErrServerClosed {
 			e.Logger.Fatal("shutting down the server")
 		}
 	}()
 
 	// Open browser
-	// if err := openBrowser("http://localhost:80"); err != nil {
-	// 	e.Logger.Printf("Failed to open browser: %v", err)
-	// }
+	if err := openBrowser("http://localhost:80"); err != nil {
+		e.Logger.Printf("Failed to open browser: %v", err)
+	}
 
 	// Wait for interrupt signal to gracefully shutdown the server
 	quit := make(chan os.Signal, 1)
